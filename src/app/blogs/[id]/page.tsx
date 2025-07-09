@@ -9,17 +9,13 @@ interface BlogPost {
   created: number;
 }
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
 export default async function BlogDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
+  const { id } = params;
+
   try {
     const post = (await Backendless.Data.of('Blog').findById(id)) as BlogPost;
 
@@ -31,7 +27,9 @@ export default async function BlogDetailPage({
         <p className="text-sm text-gray-500 mb-6">
           By {post.author} • {new Date(post.created).toLocaleDateString()}
         </p>
-        <div className="prose max-w-none text-gray-800">{post.content}</div>
+        <div className="prose max-w-none text-gray-800">
+          {post.content || 'No content available'}
+        </div>
       </div>
     );
   } catch (error) {
