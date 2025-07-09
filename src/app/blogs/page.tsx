@@ -26,7 +26,7 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
     }
   }
 
-  // ❗ Komponen async tidak didukung langsung, kita harus pisah
+
   return (
     <AsyncBlog params={params} />
   )

@@ -1,4 +1,3 @@
-// src/app/blogs/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Backendless from '@/lib/backendless'
 
@@ -10,13 +9,13 @@ interface BlogPost {
   created: number
 }
 
-interface BlogDetailPageProps {
+interface PageProps {
   params: {
     id: string
   }
 }
 
-export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
+export default async function BlogDetailPage({ params }: PageProps) {
   const { id } = params
 
   try {
@@ -25,11 +24,9 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     if (!post) return notFound()
 
     return (
-      <div className="max-w-3xl mx-auto px-4 py-10 bg-white">
+      <div className="max-w-3xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          By {post.author} • {new Date(post.created).toLocaleDateString()}
-        </p>
+        <p className="text-sm text-gray-500 mb-6">By {post.author} • {new Date(post.created).toLocaleDateString()}</p>
         <div className="prose max-w-none text-gray-800">
           {post.content}
         </div>
