@@ -1,6 +1,6 @@
+// src/app/blogs/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Backendless from '@/lib/backendless'
-import { useEffect, useState } from 'react'
 
 interface BlogPost {
   objectId: string
@@ -10,27 +10,31 @@ interface BlogPost {
   created: number
 }
 
-export default function BlogDetailPage({ params }: { params: { id: string } }) {
-  const [post, setPost] = useState<BlogPost | null>(null)
+interface BlogDetailPageProps {
+  params: { id: string }
+}
 
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const data = await Backendless.Data.of('Blog').findById(params.id) as BlogPost
-        if (!data) return notFound()
-        setPost(data)
-      } catch (err) {
-        console.error('Error fetching blog detail:', err)
-        return notFound()
-      }
+export default function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const getData = async () => {
+    try {
+      const post = await Backendless.Data.of('Blog').findById(params.id) as BlogPost
+      if (!post) return null
+      return post
+    } catch (err) {
+      console.error('Fetch failed', err)
+      return null
     }
-
-    fetchBlog()
-  }, [params.id])
-
-  if (!post) {
-    return <div className="text-center py-10">Loading...</div>
   }
+
+  // ❗ Komponen async tidak didukung langsung, kita harus pisah
+  return (
+    <AsyncBlog params={params} />
+  )
+}
+
+async function AsyncBlog({ params }: BlogDetailPageProps) {
+  const post = await Backendless.Data.of('Blog').findById(params.id) as BlogPost
+  if (!post) return notFound()
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -38,9 +42,7 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
       <p className="text-sm text-gray-500 mb-6">
         By {post.author} • {new Date(post.created).toLocaleDateString()}
       </p>
-      <div className="prose max-w-none text-gray-800">
-        {post.content}
-      </div>
+      <div className="prose max-w-none text-gray-800">{post.content}</div>
     </div>
   )
 }
