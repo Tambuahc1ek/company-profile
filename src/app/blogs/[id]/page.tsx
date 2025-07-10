@@ -9,15 +9,14 @@ interface BlogPost {
   created: number;
 }
 
+// ✅ TIDAK pakai interface PageProps, langsung destructuring
 export default async function BlogDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
-
   try {
-    const post = (await Backendless.Data.of('Blog').findById(id)) as BlogPost;
+    const post = (await Backendless.Data.of('Blog').findById(params.id)) as BlogPost;
 
     if (!post) return notFound();
 
