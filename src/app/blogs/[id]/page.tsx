@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation';
 import Backendless from '@/lib/backendless';
+import { notFound } from 'next/navigation';
 
 interface BlogPost {
   objectId: string;
@@ -9,30 +9,28 @@ interface BlogPost {
   created: number;
 }
 
-// ✅ TIDAK pakai interface PageProps, langsung destructuring
-export default async function BlogDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  try {
-    const post = (await Backendless.Data.of('Blog').findById(params.id)) as BlogPost;
+interface Props {
+  params: Promise<{
+    id: string;
+  }>;
+}
 
-    if (!post) return notFound();
+export default async function BlogDetailPage({ params }: Props) {
+  const { id } = await params;
 
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          By {post.author} • {new Date(post.created).toLocaleDateString()}
-        </p>
-        <div className="prose max-w-none text-gray-800">
-          {post.content || 'No content available'}
-        </div>
+  const post = (await Backendless.Data.of('Blog').findById(id)) as BlogPost;
+
+  if (!post) return notFound();
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+      <p className="text-gray-500 mb-6">
+        {post.author} — {new Date(post.created).toLocaleDateString()}
+      </p>
+      <div className="prose max-w-none text-gray-800">
+        {post.content || 'No content available'}
       </div>
-    );
-  } catch (error) {
-    console.error('Error fetching blog detail:', error);
-    return notFound();
-  }
+    </div>
+  );
 }

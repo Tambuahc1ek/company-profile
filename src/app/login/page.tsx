@@ -1,27 +1,28 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Backendless from '@/lib/backendless'
-import useAuthStore from '@/store/authStore'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Backendless from '@/lib/backendless';
+import useAuthStore from '@/store/authStore';
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { setUser } = useAuthStore()
+  const router = useRouter();
+  const { setUser } = useAuthStore();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const user = await Backendless.UserService.login(email, password, true)
-      setUser({ email: user.email })
-      router.push('/create-blog')
+      const user = await Backendless.UserService.login(email, password, true);
+      const useremail = user.email as string;
+      setUser({ email: useremail });
+      router.push('/create-blog');
     } catch (err: any) {
-      alert(err.message || 'Login failed')
+      alert(err.message || 'Login failed');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 flex items-center justify-center px-4">
@@ -59,5 +60,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
